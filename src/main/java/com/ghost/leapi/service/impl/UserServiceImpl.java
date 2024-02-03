@@ -122,8 +122,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 用户不存在则创建
             if (user == null) {
                 user = new User();
-                user.setUnionId(unionId);
-                user.setMpOpenId(mpOpenId);
+//                user.setUnionId(unionId);
+//                user.setMpOpenId(mpOpenId);
                 user.setUserAvatar(wxOAuth2UserInfo.getHeadImgUrl());
                 user.setUserName(wxOAuth2UserInfo.getNickname());
                 boolean result = this.save(user);

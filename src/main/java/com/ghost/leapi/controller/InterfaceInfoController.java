@@ -3,10 +3,7 @@ package com.ghost.leapi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghost.leapi.annotation.AuthCheck;
-import com.ghost.leapi.common.BaseResponse;
-import com.ghost.leapi.common.DeleteRequest;
-import com.ghost.leapi.common.ErrorCode;
-import com.ghost.leapi.common.ResultUtils;
+import com.ghost.leapi.common.*;
 import com.ghost.leapi.constant.CommonConstant;
 import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
@@ -14,9 +11,12 @@ import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.ghost.leapi.model.entity.InterfaceInfo;
 import com.ghost.leapi.model.entity.User;
+import com.ghost.leapi.model.enums.InterfaceInfoStatusEnum;
 import com.ghost.leapi.service.InterfaceInfoService;
 import com.ghost.leapi.service.UserService;
+import com.ghost.leapiclientsdk.client.LeAPIClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.webresources.ExtractingRoot;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +39,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private LeAPIClient leAPIClient;
 
     // region 增删改查
 
@@ -195,5 +198,70 @@ public class InterfaceInfoController {
 
     // endregion
 
+
+    /**
+     * 上线（发布）接口
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1. 校验接口是否存在
+        Long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 2. 校验接口是否可以调用
+        com.ghost.leapiclientsdk.model.User user = new com.ghost.leapiclientsdk.model.User();
+        user.setUsername("testInterfaceInfo");
+        String nameByJSON = leAPIClient.getNameByJSON(user);
+        if (StringUtils.isBlank(nameByJSON)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口调用失败");
+        }
+        // 3. 修改数据库中接口的状态
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 下线（关闭）接口
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest, HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1. 校验接口是否存在
+        Long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 2. 只有已经上线的接口才能下线
+        if (oldInterfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该接口尚未上线");
+        }
+        // 3. 修改数据库中接口的状态
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
 }
 
