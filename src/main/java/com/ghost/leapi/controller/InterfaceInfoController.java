@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghost.leapi.annotation.AuthCheck;
 import com.ghost.leapi.common.*;
 import com.ghost.leapi.constant.CommonConstant;
+import com.ghost.leapi.constant.UserConstant;
 import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.ghost.leapi.model.entity.InterfaceInfo;
 import com.ghost.leapi.model.entity.User;
 import com.ghost.leapi.model.enums.InterfaceInfoStatusEnum;
+import com.ghost.leapi.model.enums.UserRoleEnum;
 import com.ghost.leapi.service.InterfaceInfoService;
 import com.ghost.leapi.service.UserService;
 import com.ghost.leapiclientsdk.client.LeAPIClient;
@@ -151,7 +154,7 @@ public class InterfaceInfoController {
      * @param interfaceInfoQueryRequest
      * @return
      */
-    @AuthCheck(mustRole = "admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/list")
     public BaseResponse<List<InterfaceInfo>> listInterfaceInfo(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
         InterfaceInfo interfaceInfoQuery = new InterfaceInfo();
@@ -207,7 +210,7 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/online")
-    @AuthCheck(mustRole = "admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
                                                      HttpServletRequest request) {
         if (idRequest == null || idRequest.getId() <= 0) {
@@ -242,7 +245,7 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/offline")
-    @AuthCheck(mustRole = "admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest, HttpServletRequest request) {
         if (idRequest == null || idRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

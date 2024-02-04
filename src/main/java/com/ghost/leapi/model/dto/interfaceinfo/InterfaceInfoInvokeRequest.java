@@ -1,4 +1,4 @@
-package com.ghost.leapi.common;
+package com.ghost.leapi.model.dto.interfaceinfo;
 
 import lombok.Data;
 
