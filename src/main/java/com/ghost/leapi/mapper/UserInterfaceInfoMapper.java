@@ -1,7 +1,7 @@
 package com.ghost.leapi.mapper;
 
-import com.ghost.leapi.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ghost.leapicommon.model.entity.UserInterfaceInfo;
 
 /**
 * @author 20890

@@ -1,13 +1,11 @@
 package com.ghost.leapi.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ghost.leapi.model.dto.user.UserQueryRequest;
-import com.ghost.leapi.model.entity.User;
 import com.ghost.leapi.model.vo.LoginUserVO;
 import com.ghost.leapi.model.vo.UserVO;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import com.ghost.leapicommon.model.entity.User;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
 /**
@@ -106,13 +104,4 @@ public interface UserService extends IService<User> {
      * @return
      */
     List<UserVO> getUserVO(List<User> userList);
-
-    /**
-     * 获取查询条件
-     *
-     * @param userQueryRequest
-     * @return
-     */
-    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
-
 }

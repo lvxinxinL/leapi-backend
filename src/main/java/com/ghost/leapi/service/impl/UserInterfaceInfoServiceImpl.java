@@ -1,14 +1,11 @@
 package com.ghost.leapi.service.impl;
-
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ghost.leapi.common.ErrorCode;
 import com.ghost.leapi.exception.BusinessException;
-import com.ghost.leapi.model.entity.InterfaceInfo;
-import com.ghost.leapi.model.entity.UserInterfaceInfo;
 import com.ghost.leapi.service.UserInterfaceInfoService;
 import com.ghost.leapi.mapper.UserInterfaceInfoMapper;
-import org.apache.commons.lang3.StringUtils;
+import com.ghost.leapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +39,7 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         if (interfaceInfoId <= 0 || userId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口或用户不存在");
         }
+        // TODO 校验用户是否还有剩余调用次数
         // 接口被调用时，剩余次数 - 1，总调用次数 + 1
         UpdateWrapper<UserInterfaceInfo> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("interfaceInfoId", interfaceInfoId);

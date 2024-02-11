@@ -10,17 +10,14 @@ import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.mapper.UserMapper;
 import com.ghost.leapi.service.UserService;
 import com.ghost.leapi.common.ErrorCode;
-import com.ghost.leapi.constant.CommonConstant;
-import com.ghost.leapi.model.dto.user.UserQueryRequest;
-import com.ghost.leapi.model.entity.User;
 import com.ghost.leapi.model.enums.UserRoleEnum;
 import com.ghost.leapi.model.vo.LoginUserVO;
 import com.ghost.leapi.model.vo.UserVO;
-import com.ghost.leapi.utils.SqlUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import com.ghost.leapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -246,30 +243,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return new ArrayList<>();
         }
         return userList.stream().map(this::getUserVO).collect(Collectors.toList());
-    }
-
-    @Override
-    public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
-        if (userQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
-        }
-        Long id = userQueryRequest.getId();
-        String unionId = userQueryRequest.getUnionId();
-        String mpOpenId = userQueryRequest.getMpOpenId();
-        String userName = userQueryRequest.getUserName();
-        String userProfile = userQueryRequest.getUserProfile();
-        String userRole = userQueryRequest.getUserRole();
-        String sortField = userQueryRequest.getSortField();
-        String sortOrder = userQueryRequest.getSortOrder();
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(id != null, "id", id);
-        queryWrapper.eq(StringUtils.isNotBlank(unionId), "unionId", unionId);
-        queryWrapper.eq(StringUtils.isNotBlank(mpOpenId), "mpOpenId", mpOpenId);
-        queryWrapper.eq(StringUtils.isNotBlank(userRole), "userRole", userRole);
-        queryWrapper.like(StringUtils.isNotBlank(userProfile), "userProfile", userProfile);
-        queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
-        return queryWrapper;
     }
 }

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ghost.leapi.common.ErrorCode;
 import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.mapper.InterfaceInfoMapper;
-import com.ghost.leapi.model.entity.InterfaceInfo;
 import com.ghost.leapi.service.InterfaceInfoService;
+import com.ghost.leapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +33,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "名称过长");
         }
     }
-
-
 }
 
 

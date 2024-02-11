@@ -3,12 +3,11 @@ package com.ghost.leapi.aop;
 import com.ghost.leapi.annotation.AuthCheck;
 import com.ghost.leapi.common.ErrorCode;
 import com.ghost.leapi.exception.BusinessException;
-import com.ghost.leapi.model.entity.User;
 import com.ghost.leapi.model.enums.UserRoleEnum;
 import com.ghost.leapi.service.UserService;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import com.ghost.leapicommon.model.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

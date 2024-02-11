@@ -1,7 +1,7 @@
 package com.ghost.leapi.service;
 
-import com.ghost.leapi.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ghost.leapicommon.model.entity.InterfaceInfo;
 
 /**
 * @author 20890

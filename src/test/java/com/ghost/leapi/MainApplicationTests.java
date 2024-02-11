@@ -1,7 +1,4 @@
 package com.ghost.leapi;
-
-import com.ghost.leapi.config.WxOpenConfig;
-
 import javax.annotation.Resource;
 
 import com.ghost.leapi.service.UserInterfaceInfoService;

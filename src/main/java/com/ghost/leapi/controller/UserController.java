@@ -1,6 +1,5 @@
 package com.ghost.leapi.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghost.leapi.annotation.AuthCheck;
 import com.ghost.leapi.constant.UserConstant;
 import com.ghost.leapi.exception.BusinessException;
@@ -12,20 +11,18 @@ import com.ghost.leapi.common.ResultUtils;
 import com.ghost.leapi.config.WxOpenConfig;
 import com.ghost.leapi.model.dto.user.UserAddRequest;
 import com.ghost.leapi.model.dto.user.UserLoginRequest;
-import com.ghost.leapi.model.dto.user.UserQueryRequest;
 import com.ghost.leapi.model.dto.user.UserRegisterRequest;
 import com.ghost.leapi.model.dto.user.UserUpdateMyRequest;
 import com.ghost.leapi.model.dto.user.UserUpdateRequest;
-import com.ghost.leapi.model.entity.User;
 import com.ghost.leapi.model.vo.LoginUserVO;
 import com.ghost.leapi.model.vo.UserVO;
 import com.ghost.leapi.service.UserService;
 
-import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ghost.leapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
@@ -247,50 +244,6 @@ public class UserController {
         User user = response.getData();
         return ResultUtils.success(userService.getUserVO(user));
     }
-
-    /**
-     * 分页获取用户列表（仅管理员）
-     *
-     * @param userQueryRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
-            HttpServletRequest request) {
-        long current = userQueryRequest.getCurrent();
-        long size = userQueryRequest.getPageSize();
-        Page<User> userPage = userService.page(new Page<>(current, size),
-                userService.getQueryWrapper(userQueryRequest));
-        return ResultUtils.success(userPage);
-    }
-
-    /**
-     * 分页获取用户封装列表
-     *
-     * @param userQueryRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest,
-            HttpServletRequest request) {
-        if (userQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        long current = userQueryRequest.getCurrent();
-        long size = userQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<User> userPage = userService.page(new Page<>(current, size),
-                userService.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-        List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
-        userVOPage.setRecords(userVO);
-        return ResultUtils.success(userVOPage);
-    }
-
     // endregion
 
     /**
