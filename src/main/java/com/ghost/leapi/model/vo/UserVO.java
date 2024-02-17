@@ -21,6 +21,16 @@ public class UserVO implements Serializable {
     private String userName;
 
     /**
+     * 用户账户
+     */
+    private String userAccount;
+
+    /**
+     * 性别
+     */
+    private String gender;
+
+    /**
      * 用户头像
      */
     private String userAvatar;
@@ -28,7 +38,12 @@ public class UserVO implements Serializable {
     /**
      * 用户简介
      */
-    private String userProfile;
+//    private String userProfile;
+
+    /**
+     * 用户调用接口次数
+     */
+//    private Long count;
 
     /**
      * 用户角色：user/admin/ban

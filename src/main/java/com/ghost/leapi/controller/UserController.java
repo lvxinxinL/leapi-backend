@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.ghost.leapi.service.impl.UserServiceImpl.SALT;
 
 /**
@@ -229,6 +232,26 @@ public class UserController {
         User user = userService.getById(id);
         ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
         return ResultUtils.success(user);
+    }
+
+    /**
+     * 获取用户列表（仅管理员）
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/get_all")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<List<UserVO>> getUserByList(HttpServletRequest request) {
+        List<User> userList = userService.list();
+        ThrowUtils.throwIf(userList == null, ErrorCode.NOT_FOUND_ERROR);
+        List<UserVO> userVOList = new ArrayList<>();
+        for (User user : userList) {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            userVOList.add(userVO);
+        }
+        return ResultUtils.success(userVOList);
     }
 
     /**
