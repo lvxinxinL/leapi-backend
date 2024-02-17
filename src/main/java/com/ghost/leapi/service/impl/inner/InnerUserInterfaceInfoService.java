@@ -1,7 +1,6 @@
 package com.ghost.leapi.service.impl.inner;
 
 import com.ghost.leapi.service.UserInterfaceInfoService;
-import com.ghost.leapicommon.model.entity.User;
 import com.ghost.leapicommon.service.InnerUserInterfaceService;
 import org.apache.dubbo.config.annotation.DubboService;
 

@@ -1,7 +1,5 @@
 package com.ghost.leapi.annotation;
 
-import com.ghost.leapi.model.enums.UserRoleEnum;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

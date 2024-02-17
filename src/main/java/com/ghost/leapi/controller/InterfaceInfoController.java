@@ -1,5 +1,7 @@
 package com.ghost.leapi.controller;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghost.leapi.annotation.AuthCheck;
@@ -17,14 +19,17 @@ import com.ghost.leapi.service.UserService;
 import com.ghost.leapiclientsdk.client.LeAPIClient;
 import com.ghost.leapicommon.model.entity.InterfaceInfo;
 import com.ghost.leapicommon.model.entity.User;
+import com.ghost.leapicommon.model.vo.InterfaceInfoVO;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -139,12 +144,21 @@ public class InterfaceInfoController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<InterfaceInfo> getInterfaceInfoById(long id) {
+    public BaseResponse<InterfaceInfoVO> getInterfaceInfoById(long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
-        return ResultUtils.success(interfaceInfo);
+        // 转换返回日期时间的数据格式
+        InterfaceInfoVO interfaceInfoVO = new InterfaceInfoVO();
+        BeanUtils.copyProperties(interfaceInfo, interfaceInfoVO);
+        Date updateTime = interfaceInfo.getUpdateTime();
+        String handledUpdateTime = DateUtil.format(updateTime, "yyyy-MM-dd HH:mm:ss");
+        interfaceInfoVO.setUpdateTime(handledUpdateTime);
+        Date createTime = interfaceInfo.getCreateTime();
+        String handledCreateTime = DateUtil.format(createTime, "yyyy-MM-dd HH:mm:ss");
+        interfaceInfoVO.setCreateTime(handledCreateTime);
+        return ResultUtils.success(interfaceInfoVO);
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.ghost.leapi.model.dto.interfaceinfo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.ghost.leapi.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
