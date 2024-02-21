@@ -15,6 +15,7 @@ import com.ghost.leapi.model.dto.user.UserRegisterRequest;
 import com.ghost.leapi.model.dto.user.UserUpdateMyRequest;
 import com.ghost.leapi.model.dto.user.UserUpdateRequest;
 import com.ghost.leapi.model.vo.LoginUserVO;
+import com.ghost.leapi.model.dto.UserCertificateDTO;
 import com.ghost.leapi.model.vo.UserVO;
 import com.ghost.leapi.service.UserService;
 
@@ -290,4 +291,29 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+    /**
+     * 更新用户凭证
+     *
+     * @param userCertificateDTO
+     * @param request
+     * @return
+     */
+    @PostMapping("/update/certificate")
+    public BaseResponse<Boolean> updateMyUser(@RequestBody UserCertificateDTO userCertificateDTO,
+                                              HttpServletRequest request) {
+        if (userCertificateDTO == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        User user = new User();
+        BeanUtils.copyProperties(loginUser, user);
+        user.setAccessKey(userCertificateDTO.getAccessKey());
+        user.setSecretKey(userCertificateDTO.getSecretKey());
+        user.setId(loginUser.getId());
+        boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
 }

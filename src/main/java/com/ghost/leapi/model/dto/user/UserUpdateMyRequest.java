@@ -19,10 +19,16 @@ public class UserUpdateMyRequest implements Serializable {
      */
     private String userAvatar;
 
+
     /**
-     * 简介
+     * ak
      */
-    private String userProfile;
+    private String accessKey;
+
+    /**
+     * sk
+     */
+    private String secretKey;
 
     private static final long serialVersionUID = 1L;
 }

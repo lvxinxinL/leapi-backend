@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 已登录用户视图（脱敏）
+ * 已登录用户视图
  */
 @Data
 public class LoginUserVO implements Serializable {
@@ -24,6 +24,16 @@ public class LoginUserVO implements Serializable {
      * 用户头像
      */
     private String userAvatar;
+
+    /**
+     * ak
+     */
+    private String accessKey;
+
+    /**
+     * sk
+     */
+    private String secretKey;
 
     /**
      * 用户简介
