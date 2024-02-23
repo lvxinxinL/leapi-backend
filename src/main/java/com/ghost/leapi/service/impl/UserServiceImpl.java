@@ -1,12 +1,15 @@
 package com.ghost.leapi.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ghost.leapi.common.IdRequest;
 import com.ghost.leapi.constant.UserConstant;
 import com.ghost.leapi.exception.BusinessException;
+import com.ghost.leapi.exception.ThrowUtils;
 import com.ghost.leapi.mapper.UserMapper;
 import com.ghost.leapi.service.UserService;
 import com.ghost.leapi.common.ErrorCode;
@@ -64,8 +67,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
             // 3. 为用户分配 accessKey 和 secretKey
-            String accessKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(5));
-            String secretKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(8));
+            List<String> certificateList = genAccessKeyAndSecretKey(userAccount);
+            String accessKey = certificateList.get(0);// AccessKey
+            String secretKey = certificateList.get(1);// SecretKey
             // 4. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
@@ -78,6 +82,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             return user.getId();
         }
+    }
+
+    /**
+     * 生成 AccessKey、SecretKey
+     * @param userAccount
+     * @return
+     */
+    public List<String> genAccessKeyAndSecretKey(String userAccount) {
+        ArrayList<String> list = new ArrayList<>();
+        String accessKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(5));
+        String secretKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(8));
+        list.add(accessKey);
+        list.add(secretKey);
+        return list;
     }
 
     @Override
@@ -243,5 +261,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return new ArrayList<>();
         }
         return userList.stream().map(this::getUserVO).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据用户 id 更新用户凭证
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean updateCertificate(IdRequest idRequest, HttpServletRequest request) {
+        // 1、校验用户是否存在
+        User user = this.getById(idRequest.getId());
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 2、校验请求用户是否是当前登录用户
+//        User loginUser = this.getLoginUser(request);
+//        if (loginUser != user) {
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+//        }
+        // 3、调用 API 签名生成算法更新 certificate
+        // 3.1 取出用户账户加入算法进行更新
+        String userAccount = user.getUserAccount();
+        List<String> certificateList = this.genAccessKeyAndSecretKey(userAccount);
+        if (CollectionUtil.isEmpty(certificateList)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+        // 3.2 从集合中取出用户凭证
+        String accessKey = certificateList.get(0);
+        String secretKey = certificateList.get(1);
+
+        // 4、更新数据库中的用户凭证
+        user.setAccessKey(accessKey);
+        user.setSecretKey(secretKey);
+        // 5、更新凭证后返回 true 代表更新成功
+        boolean result = this.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);// 更新失败
+        return result;
     }
 }

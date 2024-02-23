@@ -1,6 +1,7 @@
 package com.ghost.leapi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ghost.leapi.common.IdRequest;
 import com.ghost.leapi.model.vo.LoginUserVO;
 import com.ghost.leapi.model.vo.UserVO;
 import java.util.List;
@@ -104,4 +105,13 @@ public interface UserService extends IService<User> {
      * @return
      */
     List<UserVO> getUserVO(List<User> userList);
+
+    /**
+     * 根据用户 id 更新用户凭证
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    boolean updateCertificate(IdRequest idRequest, HttpServletRequest request);
 }
