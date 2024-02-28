@@ -1,6 +1,5 @@
 package com.ghost.leapi.controller;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,8 +22,8 @@ import com.ghost.leapicommon.model.vo.InterfaceInfoVO;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.rest.RestUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -237,7 +236,7 @@ public class InterfaceInfoController {
         }
         // 2. 校验接口是否可以调用
         com.ghost.leapiclientsdk.model.User user = new com.ghost.leapiclientsdk.model.User();
-        user.setUsername("testInterfaceInfo");
+        user.setName("testInterfaceInfo");
         String nameByJSON = leAPIClient.getNameByJSON(user);
         if (StringUtils.isBlank(nameByJSON)) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口调用失败");
@@ -296,6 +295,9 @@ public class InterfaceInfoController {
         // 1. 校验接口是否存在
         Long id = interfaceInfoInvokeRequest.getId();
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        if (userRequestParams == null && id == 1) {// 在线调用获取名称接口时参数为空（有些接口不需要填写参数）
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
@@ -309,10 +311,28 @@ public class InterfaceInfoController {
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
         LeAPIClient apiClient = new LeAPIClient(accessKey, secretKey);
-        Gson gson = new Gson();
-        com.ghost.leapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.ghost.leapiclientsdk.model.User.class);
-        String nameByJSON = apiClient.getNameByJSON(user);
-        return ResultUtils.success(nameByJSON);
+
+        if (id == 6) {// 调用随机笑话接口
+            String randomJoke = apiClient.getRandomJoke();
+            return ResultUtils.success(randomJoke);
+        } else if (id == 2){// 调用随机获取鸡汤接口
+            String poisonousChickenSoup = apiClient.getPoisonousChickenSoup();
+            return ResultUtils.success(poisonousChickenSoup);
+        } else if (id == 3){// 调用随机壁纸接口
+            String randomWallpaper = apiClient.getRandomWallpaper();
+            return ResultUtils.success(randomWallpaper);
+        } else if (id == 4){// 调用随机土味情话接口
+            String loveTalk = apiClient.getLoveTalk();
+            return ResultUtils.success(loveTalk);
+        } else if (id == 5){// 调用每日一句励志英语接口
+            String dailyEnglish = apiClient.getDailyEnglish();
+            return ResultUtils.success(dailyEnglish);
+        } else {// id == 1 调用获取输入名称接口
+            Gson gson = new Gson();
+            com.ghost.leapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.ghost.leapiclientsdk.model.User.class);
+            String nameByJSON = apiClient.getNameByJSON(user);
+            return ResultUtils.success(nameByJSON);
+        }
     }
 }
 

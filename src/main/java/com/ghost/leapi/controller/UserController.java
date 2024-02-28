@@ -1,16 +1,16 @@
 package com.ghost.leapi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ghost.leapi.annotation.AuthCheck;
 import com.ghost.leapi.common.*;
+import com.ghost.leapi.constant.CommonConstant;
 import com.ghost.leapi.constant.UserConstant;
 import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.exception.ThrowUtils;
 import com.ghost.leapi.config.WxOpenConfig;
-import com.ghost.leapi.model.dto.user.UserAddRequest;
-import com.ghost.leapi.model.dto.user.UserLoginRequest;
-import com.ghost.leapi.model.dto.user.UserRegisterRequest;
-import com.ghost.leapi.model.dto.user.UserUpdateMyRequest;
-import com.ghost.leapi.model.dto.user.UserUpdateRequest;
+import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
+import com.ghost.leapi.model.dto.user.*;
 import com.ghost.leapi.model.vo.LoginUserVO;
 import com.ghost.leapi.model.dto.UserCertificateDTO;
 import com.ghost.leapi.model.vo.UserVO;
@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ghost.leapicommon.model.entity.InterfaceInfo;
 import com.ghost.leapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.ghost.leapi.service.impl.UserServiceImpl.SALT;
 
@@ -251,6 +253,56 @@ public class UserController {
         }
         return ResultUtils.success(userVOList);
     }
+//
+//    /**
+//     * 分页获取用户列表
+//     *
+//     * @param userQueryRequest
+//     * @param request
+//     * @return
+//     */
+//    @GetMapping("/list/page/user")
+//    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+//        // 校验用户参数
+//        if (userQueryRequest == null || userQueryRequest.getId() <= 0) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        User userQuery = new User();
+//        BeanUtils.copyProperties(userQueryRequest, userQuery);
+//        long current = userQueryRequest.getCurrent();
+//        long size = userQueryRequest.getPageSize();
+//        String sortField = userQueryRequest.getSortField();
+//        String sortOrder = userQueryRequest.getSortOrder();
+//        String userName = userQueryRequest.getUserName();
+//        // userName 支持模糊查询
+//        userQuery.setUserName(null);
+//        // 限制爬虫
+//        if (size > 50) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+//        queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
+//        queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
+//                sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+//        Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
+//        // 创建一个新的 Page 实例，用于存储转换后的 UserVO 数据
+//        Page<UserVO> userVoPage = new Page<>(userPage.getCurrent(), userPage.getSize());
+//        // 遍历查询结果，将 User 转换为 UserVO，并进行脱敏处理
+//        List<UserVO> userVoList = userPage.getRecords().stream()
+//                .map(this::convertToUserVOAndDesensitize)
+//                .collect(Collectors.toList());
+//        userVoPage.setTotal(userPage.getTotal());
+//        userVoPage.setRecords(userVoList);
+//        return ResultUtils.success(userVoPage);
+//    }
+//
+//    // 用户实体转 VO 并脱敏的方法
+//    private UserVO convertToUserVOAndDesensitize(User user) {
+//        UserVO userVO = new UserVO();
+//        // 这里进行属性映射，同时对敏感信息进行脱敏处理
+//        BeanUtils.copyProperties(user, userVO);
+//        return userVO;
+//    }
 
     /**
      * 根据 id 获取包装类
