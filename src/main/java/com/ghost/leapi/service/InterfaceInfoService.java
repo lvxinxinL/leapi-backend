@@ -1,7 +1,12 @@
 package com.ghost.leapi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ghost.leapi.common.BaseResponse;
+import com.ghost.leapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
+import com.ghost.leapiclientsdk.client.LeAPIClient;
 import com.ghost.leapicommon.model.entity.InterfaceInfo;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author 20890
@@ -11,4 +16,8 @@ import com.ghost.leapicommon.model.entity.InterfaceInfo;
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
 
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
+
+//    BaseResponse<Object> invokeInterfaceById(InterfaceInfoInvokeRequest interfaceInfoInvokeRequest, HttpServletRequest request);
+
+//    String getResultByInterfaceId(Long id, String userRequestParams, LeAPIClient apiClient);
 }

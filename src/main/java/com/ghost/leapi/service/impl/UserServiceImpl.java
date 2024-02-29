@@ -11,6 +11,7 @@ import com.ghost.leapi.constant.UserConstant;
 import com.ghost.leapi.exception.BusinessException;
 import com.ghost.leapi.exception.ThrowUtils;
 import com.ghost.leapi.mapper.UserMapper;
+import com.ghost.leapi.service.InterfaceInfoService;
 import com.ghost.leapi.service.UserService;
 import com.ghost.leapi.common.ErrorCode;
 import com.ghost.leapi.model.enums.UserRoleEnum;

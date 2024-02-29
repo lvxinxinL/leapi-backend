@@ -295,7 +295,7 @@ public class InterfaceInfoController {
         // 1. 校验接口是否存在
         Long id = interfaceInfoInvokeRequest.getId();
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-        if (userRequestParams == null && id == 1) {// 在线调用获取名称接口时参数为空（有些接口不需要填写参数）
+        if (userRequestParams == null && id == 7) {// 在线调用获取名称接口时参数为空（有些接口不需要填写参数）
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
