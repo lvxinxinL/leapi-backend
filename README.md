@@ -1,18 +1,11 @@
-# SpringBoot 项目初始模板
+# LeAPI 接口开放平台
 
-> 作者：[程序员鱼皮](https://github.com/liyupi)
-> 仅分享于 [编程导航知识星球](https://yupi.icu)
-
-基于 Java SpringBoot 的项目初始模板，整合了常用框架和主流业务的示例代码。
-
-只需 1 分钟即可完成内容网站的后端！！！大家还可以在此基础上快速开发自己的项目。
+基于 React + Spring Boot + Dubbo + Spring Cloud Gateway 的免费 API 接口开放调用平台。管理员可以集成并发布接口、下线接口及管理用户等；用户可以浏览接口、在线调试接口及更新用户凭证等，并通过 Java SDK 轻松调用接口。
 
 [toc]
 
-## 模板特点
-
-### 主流框架 & 特性
-
+## 主项目 leapi-backend
+### 功能介绍
 - Spring Boot 2.7.x（贼新）
 - Spring MVC
 - MyBatis + MyBatis Plus 数据访问（开启分页）
@@ -21,36 +14,32 @@
 - Spring Scheduler 定时任务
 - Spring 事务注解
 
-### 数据存储
+### 页面展示
+- 
 
-- MySQL 数据库
-- Redis 内存数据库
-- Elasticsearch 搜索引擎
-- 腾讯云 COS 对象存储
+## 模拟接口系统 leapi-interface
+### 接口介绍
+- 
 
-### 工具类
+## 客户端 SDK leapi-client-sdk
+### 如何开发一个 Java SDK？
+- 第一步
+- 第二步
+- 第三步
 
-- Easy Excel 表格处理
-- Hutool 工具库
-- Apache Commons Lang3 工具类
-- Lombok 注解
+## 公共模块子系统 leapi-common
+- 公共实体类
+- 公共工具类
+- 公共异常处理
 
-### 业务特性
+## API 网关子系统 leapi-gateway
+- 路由控制
+- 访问限制
+- 流量染色
+- 用户鉴权
+- 统计接口调用次数
 
-- Spring Session Redis 分布式登录
-- 全局请求响应拦截器（记录日志）
-- 全局异常处理器
-- 自定义错误码
-- 封装通用响应类
-- Swagger + Knife4j 接口文档
-- 自定义权限注解 + 全局校验
-- 全局跨域处理
-- 长整数丢失精度解决
-- 多环境配置
-
-
-## 业务功能
-
+## 使用场景
 - 提供示例 SQL（用户、帖子、帖子点赞、帖子收藏表）
 - 用户登录、注册、注销、更新、检索、权限管理
 - 帖子创建、删除、编辑、更新、数据库检索、ES 灵活检索
@@ -129,36 +118,4 @@ spring:
 
 ```java
 @SpringBootApplication
-```
-
-### Elasticsearch 搜索引擎
-
-1）修改 `application.yml` 的 Elasticsearch 配置为你自己的：
-
-```yml
-spring:
-  elasticsearch:
-    uris: http://localhost:9200
-    username: root
-    password: 123456
-```
-
-2）复制 `sql/post_es_mapping.json` 文件中的内容，通过调用 Elasticsearch 的接口或者 Kibana Dev Tools 来创建索引（相当于数据库建表）
-
-```
-PUT post_v1
-{
- 参数见 sql/post_es_mapping.json 文件
-}
-```
-
-这步不会操作的话需要补充下 Elasticsearch 的知识，或者自行百度一下~
-
-3）开启同步任务，将数据库的帖子同步到 Elasticsearch
-
-找到 job 目录下的 `FullSyncPostToEs` 和 `IncSyncPostToEs` 文件，取消掉 `@Component` 注解的注释，再次执行程序即可触发同步：
-
-```java
-// todo 取消注释开启任务
-//@Component
 ```
